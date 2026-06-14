@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #1a1a1a;
+  overflow: hidden;
+  touch-action: none; /* Prevent zooming and scrolling on mobile */
+}
+
+#root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Modern mobile fix for address bar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000; /* Dark background for letterbox bars */
+  overflow: hidden; /* Prevent scrollbars when rotating */
+}
+
+.game-container {
+  position: relative;
+  /* Constrain aspect ratio exactly to the background image (1280x585) */
+  width: 100vw;
+  height: calc(100vw * (585 / 1280));
+  max-height: 100vh;
+  max-width: calc(100vh * (1280 / 585));
+  margin: auto;
+  
+  background-image: url('../assets/images/background.jpg');
+  background-size: 100% 100%; /* Container is fixed aspect ratio, so this scales perfectly without distortion */
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+}
+
+.play-area {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cups-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent blocking clicks */
+}
+
+.cup-wrapper {
+  position: absolute;
+  width: 10%; /* 10% of screen width matches the old 12% of 80% */
+  cursor: pointer;
+  pointer-events: auto; /* Restore clicks */
+  /* GSAP will handle all transforms and left/top positioning completely */
+}
+
+.cup-image {
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+}
+
+.diamond {
+  position: absolute;
+  width: 40%;
+  left: 30%;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.controls-container {
+  position: absolute;
+  bottom: 8.8%; /* Converted 40px offset into percentage relative to container height */
+  left: 17%; /* From the left edge */
+  width: 36%; /* Width to cover the carved slots */
+  height: 14%; /* Height of the carved slots */
+  display: flex;
+  justify-content: space-between; /* Space out Sound, Center, Menu */
+  align-items: center; /* Vertically center them */
+  z-index: 10;
+}
+
+.center-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 70%; /* Take up middle space */
+  gap: 5%;
+}
+
+.top-center-controls {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 45%;
+  gap: 2%;
+}
+
+.bottom-center-controls {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 45%;
+  gap: 2%;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Remove old small max-heights to allow buttons to be large */
+}
+
+/* Sound and Menu */
+.square-btn {
+  height: 50%;
+  aspect-ratio: 1 / 1;
+}
+
+.sound-btn,
+.menu-btn {
+  height: 100%; /* 2x size as requested */
+}
+
+/* 1.42x and 2.85x */
+.multiplier-btn {
+  height: 100%;
+  width: 48%; /* Almost half of center top */
+  transform: scale(1.5); /* 1.5x size as requested */
+}
+
+/* Bet, Random, Auto */
+.action-btn {
+  height: 100%;
+  width: 32%; /* Third of center bottom */
+  transform: scale(1.5); /* 1.5x size as requested */
+}
+
+/* Adjust the click animation for the scaled buttons (1.5 * 0.95 = 1.425) */
+.multiplier-btn:active,
+.action-btn:active {
+  transform: scale(1.425);
+}
+
+/* 2.85x specific scaling (1.5x bigger than the others: 1.5 * 1.5 = 2.25) */
+.btn-285 {
+  transform: scale(2.25) !important;
+}
+
+.btn-285:active {
+  transform: scale(2.1375) !important; /* 2.25 * 0.95 */
+}
+
+/* History panel placeholder (right side) */
+.history-panel {
+  position: absolute;
+  right: 2%;
+  top: 10%;
+  width: 15%;
+  height: 80%;
+  pointer-events: none; /* Just visual */
+}
+
+/* Footer Cash Balance */
+.cash-balance {
+  position: absolute;
+  bottom: calc(2% - 10px); /* Moved 10px down */
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #D2B48C; /* Light tan */
+  font-size: clamp(4px, calc(2.5vmin - 8px), 16px); /* Resized another 2px smaller */
+  font-weight: 800;
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 20;
+  text-transform: uppercase;
+}
+
+/* Force Landscape Mode ONLY for Mobile/Tablet Portrait */
+@media screen and (max-width: 1024px) and (orientation: portrait) {
+  .game-container {
+    /* Swap viewport width/height bindings */
+    width: 100vh;
+    width: 100dvh; /* Accounts for mobile address bars cutting off the edges */
+    height: calc(100vh * (585 / 1280));
+    height: calc(100dvh * (585 / 1280));
+    
+    /* Maximums also swap to prevent overflowing the physical screen width */
+    max-height: 100vw;
+    max-width: calc(100vw * (1280 / 585));
+
+    /* Rotate and center */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    margin: 0;
+  }
+}
